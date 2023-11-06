@@ -1,9 +1,10 @@
 import { Inter } from "next/font/google";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [allFeedback, setAllFeedback] = useState([]);
   const emailRef = useRef();
   const messageRef = useRef();
 
@@ -25,6 +26,12 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => console.log(data));
   };
+
+  const getFeedback = () => {
+    fetch("/api/feedback")
+      .then((res) => res.json())
+      .then((data) => setAllFeedback(data.feedback));
+  };
   return (
     <div>
       <h1>Home Page</h1>
@@ -39,6 +46,15 @@ export default function Home() {
         </div>
         <button>전송</button>
       </form>
+      <hr />
+      <button onClick={getFeedback}>데이터 가져오기</button>
+      <ul>
+        {allFeedback.map((data) => (
+          <li key={data.id}>
+            {data.email} : {data.message}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
